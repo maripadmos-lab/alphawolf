@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Score Tally</title>
+    <link rel="stylesheet" href="bomboclaat.css">
+</head>
+<body>
+
+    <h2><i>School Activity Score Tally</i></h2>
+
+    <div class="container">
+        <div class="input-group">
+            <input type="text" id="dateInput" placeholder="Date (e.g., Aug 30)">
+            <input type="text" id="activityInput" placeholder="Activity Name">
+            <input type="text" id="scoreInput" placeholder="Score (e.g., 18/20)">
+            <button id="addBtn">Add Score</button>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>NO.</th>
+                    <th>Date</th>
+                    <th>Activity Name</th>
+                    <th>Score</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="scoreTableBody">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        let scores = [];
+        let editIndex = -1;
+
+        const dateInput = document.getElementById('dateInput');
+        const activityInput = document.getElementById('activityInput');
+        const scoreInput = document.getElementById('scoreInput');
+        const addBtn = document.getElementById('addBtn');
+        const tableBody = document.getElementById('scoreTableBody');
+
+        function renderTable() {
+            tableBody.innerHTML = '';
+            scores.forEach((item, index) => {
+                const row = `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${item.date}</td>
+                        <td>${item.activity}</td>
+                        <td>${item.score}</td>
+                        <td class="actions">
+                            <button class="edit-btn" onclick="editScore(${index})">Edit</button>
+                            <button class="delete-btn" onclick="deleteScore(${index})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+                tableBody.innerHTML += row;
+            });
+        }
+
+        addBtn.onclick = () => {
+            const date = dateInput.value;
+            const activity = activityInput.value;
+            const score = scoreInput.value;
+
+            if(date && activity && score) {
+                if(editIndex === -1) {
+                    scores.push({ date, activity, score });
+                } else {
+                    scores[editIndex] = { date, activity, score };
+                    editIndex = -1;
+                    addBtn.innerText = "Add Score";
+                }
+                
+                dateInput.value = '';
+                activityInput.value = '';
+                scoreInput.value = '';
+                renderTable();
+            } else {
+                alert("Please fill in all fields brah..");
+            }
+        };
+
+        window.deleteScore = (index) => {
+            scores.splice(index, 1);
+            renderTable();
+        };
+
+        window.editScore = (index) => {
+            const item = scores[index];
+            dateInput.value = item.date;
+            activityInput.value = item.activity;
+            scoreInput.value = item.score;
+            editIndex = index;
+            addBtn.innerText = "Update Score";
+        };
+    </script>
+</body>
+</html>
